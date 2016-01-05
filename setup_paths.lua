@@ -1,0 +1,2 @@
+package.path = "C:\\Users\\Ben Chung\\AppData\\Roaming\\LuaRocks\\share\\lua\\5.2\\?.lua;C:\\Users\\Ben Chung\\AppData\\Roaming\\LuaRocks\\share\\lua\\5.2\\?\\init.lua"
+package.cpath = "C:\\Users\\Ben Chung\\AppData\\Roaming\\LuaRocks\\lib\\lua\\5.2\\?.dll"
