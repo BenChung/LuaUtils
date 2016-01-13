@@ -61,6 +61,13 @@ fisheries_behaviour = Behaviours:behaviour({
 	}
 })
 
+target_behaviour = Behaviours:behaviour({
+  name = "target_behaviour",
+  destroyed = function (self)
+    local oldscore = ScenEdit_GetScore("PLAN")
+    ScenEdit_SetScore("PLAN", oldscore + self.destroyed_score, "Destroyed target " .. self.name)
+  end
+})
 
 
 -- must go at end

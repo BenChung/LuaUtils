@@ -326,21 +326,31 @@ local function compose(beh1, beh2)
 
 	local outname = beh1.name .. "|" .. beh2.name
 	local outapproach = {}
-	for k,v in pairs(beh1.approach_handlers) do
-		if beh2.approach_handlers[k] == nil then
-			outapproach[k] = v
-		else
-			outapproach[k] = function(self, other)
-				v(self, other)
-				if ScenEdit_GetUnit({guid=other.guid}) == nil then return end
-				beh2[k](self, other)
-			end
-		end
-	end
-	for k,v in pairs(beh2.approach_handlers) do
-		if beh1.approach_handlers[k] == nil then outapproach[k] = v end
-	end
-	return {name = outname, approach_handlers = outapproach}
+  if beh1.approach_handlers ~= nil then
+    for k,v in pairs(beh1.approach_handlers) do
+      if beh2.approach_handlers[k] == nil then
+        outapproach[k] = v
+      else
+        outapproach[k] = function(self, other)
+          v(self, other)
+          if ScenEdit_GetUnit({guid=other.guid}) == nil then return end
+          beh2[k](self, other)
+        end
+      end
+    end
+  end
+  if beh2.approach_handlers ~= nil then
+    for k,v in pairs(beh2.approach_handlers) do
+      if beh1.approach_handlers[k] == nil then outapproach[k] = v end
+    end
+  end
+  local handler1 = beh1.destroyed_handler
+  local handler2 = beh2.destroyed_handler
+  local function handler(id)
+    if handler1 ~= nil then handler1(id) end
+    if handler2 ~= nil then handler2(id) end
+  end
+	return {name = outname, approach_handlers = outapproach, destroyed_handler = handler }
 end
 
 local compbh = {}
