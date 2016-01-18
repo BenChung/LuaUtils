@@ -61,11 +61,13 @@ fisheries_behaviour = Behaviours:behaviour({
 	}
 })
 
-target_behaviour = Behaviours:behaviour({
-  name = "target_behaviour",
-  destroyed = function (self)
+gunnery_target_behaviour = Behaviours:behaviour({
+  name = "gunnery_target_behaviour",
+  destroyed_handler = function (self)
     local oldscore = ScenEdit_GetScore("PLAN")
     ScenEdit_SetScore("PLAN", oldscore + self.destroyed_score, "Destroyed target " .. self.name)
+    if KeyStore.GunneryTargetsDestroyed == nil then KeyStore.GunneryTargetsDestroyed = 0 end
+    KeyStore.GunneryTargetsDestroyed = KeyStore.GunneryTargetsDestroyed + 1
   end
 })
 
@@ -230,7 +232,7 @@ local accident_types = {
 		TimerEvents:register(5*60, FnManager:make("false_alarm_cleared", {circle})) -- 1 hour to clear
 	end}}, -- comments
 	{10, {type = "light_down", action = function ()
-		MessageQueue:push(light_aircraft_down_message)
+		ScenEdit_SpecialMessage("PLAN", light_aircraft_down_message)
 		local center, circle = make_AOU()
 		
 		local wreckage = ScenEdit_AddUnit(center ^ {

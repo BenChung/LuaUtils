@@ -7,9 +7,9 @@ debug.checkcount = 1
 debug.verbose = true
 debug.coro()
 
-dofile("D:\\CMANO-Reinst\\Lua\\TamKung\\math.lua")
-dofile("D:\\CMANO-Reinst\\Lua\\TamKung\\keystore.lua")
-dofile("D:\\CMANO-Reinst\\Lua\\TamKung\\sceneutils.lua")
-dofile("D:\\CMANO-Reinst\\Lua\\TamKung\\traffic.lua")
-dofile("D:\\CMANO-Reinst\\Lua\\TamKung\\strings.lua")
-dofile("D:\\CMANO-Reinst\\Lua\\TamKung\\inittk.lua")
+load_file("D:\\CMANO-Reinst\\Lua\\TamKung\\math.lua")
+load_file("D:\\CMANO-Reinst\\Lua\\TamKung\\keystore.lua")
+load_file("D:\\CMANO-Reinst\\Lua\\TamKung\\sceneutils.lua")
+load_file("D:\\CMANO-Reinst\\Lua\\TamKung\\traffic.lua")
+load_file("D:\\CMANO-Reinst\\Lua\\TamKung\\strings.lua")
+load_file("D:\\CMANO-Reinst\\Lua\\TamKung\\inittk.lua")
