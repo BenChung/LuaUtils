@@ -25,3 +25,14 @@ returning_message = "Commander, the fishing vessel is returning to the North Kor
 invalid_interceptor_message = "Commander, the ship cannot intercept a trawler, they don't have the training. Use one of the fisheries enforcement ships."
 boarding_message = "Since the ship has violated the EEZ more than once, and we cannot enforce penalties to the owner, we are impounding it. Boarding will take 10 minutes, then take the vessel into Dalian."
 inside_NK_EEZ = "The intercepted ship is inside the North Korean EEZ and is fishing legally."
+
+targets_spawned_message = "The gunnery targets have been deployed. To best demonstrate your ships capabilities, destroy them as quickly as possible (within 5 mins)."
+
+completed_gunnery = "You have destroyed all 4 targets in the allotted time. The next stage of the test, engaging an aerial target, will commence in 5 minutes."
+completed_gunnery_scoring = "All targets destroyed in allotted time."
+
+failed_gunnery = "It took longer than 5 minutes to destroy the targets, and the ship has failed this portion of weapons acceptance trials. A review of your actions will commence, but the testing will continue with the aerial engagement series."
+failed_gunnery_scoring = "Took longer than 5 minutes to destroy the targets"
+
+fighter_target_destroyed = "The target has been destroyed, continue the trials with the underwater search test."
+fighter_target_destroyed_scoring = "Fighter target destroyed"

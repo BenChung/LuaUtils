@@ -15,4 +15,4 @@ for i=1,4 do
   unit.destroyed_score = 1
 end
 
-ScemEdit_SpecialMessage("PLAN", "The gunnery targets have been deployed. To best demonstrate your ships capabilities, destroy them as quickly as possible.")
+ScenEdit_SpecialMessage("PLAN", targets_spawned_message)

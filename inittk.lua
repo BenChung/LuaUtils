@@ -1,4 +1,3 @@
-require('mobdebug').on()
 local traceback = ""
 local status, err = xpcall(function() 
 SceneManager:restore() -- restore the scene data from the store
@@ -60,14 +59,60 @@ fisheries_behaviour = Behaviours:behaviour({
 		}
 	}
 })
+local function launch_target_aircraft()
+  local target = ScenEdit_GetUnit({side="Target", name="Target #1"})
+  target.mission = "Target Loop"
+  target.behaviour = aircraft_target_behaviour
+end
+
+local function score_with_message(deltaScore, specialmessage, scoremessage)
+  local oldscore = ScenEdit_GetScore("PLAN")
+  ScenEdit_SetScore("PLAN", oldscore+deltaScore, scoremessage)
+  ScenEdit_SpecialMessage("PLAN", specialmessage)
+end
+
+local function spawn_submarine_targets()
+  local function rpget(num) return Point.new(ScenEdit_GetReferencePoint({side="Target", name="RP-".. num})) end
+  local rps = {2747,2748,2749,2750,2745,2746}
+  for k,v in ipairs(rps) do
+    rps[k] = rpget(v)
+  end
+  
+  local tris = Polygon.triangulate(rps)
+  
+  for i=1,4 do
+    ScenEdit_AddUnit(Polygon.random(math.random, tris) ^ {name="Target Sub #" .. i, side="Target", type="submarine", dbid=520, altitude=-66})
+  end
+end
+
+aircraft_target_behaviour = Behaviours:behaviour({
+    name="aircraft_target_behaviour",
+    destroyed_handler = function (self) 
+      score_with_message(3, fighter_target_destroyed, fighter_target_destroyed_scoring)
+      spawn_submarine_targets()
+    end
+})
 
 gunnery_target_behaviour = Behaviours:behaviour({
   name = "gunnery_target_behaviour",
   destroyed_handler = function (self)
     local oldscore = ScenEdit_GetScore("PLAN")
     ScenEdit_SetScore("PLAN", oldscore + self.destroyed_score, "Destroyed target " .. self.name)
-    if KeyStore.GunneryTargetsDestroyed == nil then KeyStore.GunneryTargetsDestroyed = 0 end
+    if KeyStore.GunneryTargetsDestroyed == nil then 
+      KeyStore.GunneryTargetsDestroyed = 0 
+      KeyStore.GunneryTestStarted = ScenEdit_CurrentTime()
+    end
+    
     KeyStore.GunneryTargetsDestroyed = KeyStore.GunneryTargetsDestroyed + 1
+    if KeyStore.GunneryTargetsDestroyed == 4 then
+      local elapsed_time = ScenEdit_CurrentTime() - KeyStore.GunneryTestStarted
+      if elapsed_time < 60*7 then
+        score_with_message(5, completed_gunnery, completed_gunnery_scoring)
+      else
+        score_with_message(-5, failed_gunnery, failed_gunnery_scoring)
+      end
+      launch_target_aircraft()
+    end
   end
 })
 
