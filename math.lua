@@ -3,6 +3,9 @@ Vector = {}
 Quaternion = {}
 
 function Point.new(lat, lon)
+    if lat == nil then
+      error("Must specify at least one argument to the point constructor")
+    end
     if lon == nil then
         if lat == nil then error("invalid latitude " .. debug.traceback()) end
         if lat.type == "Vector" then
