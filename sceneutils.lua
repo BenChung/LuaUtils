@@ -5,7 +5,7 @@ local function persist_manager()
  for guid,_ in pairs(SceneManager.units) do
   table.insert(outp, guid)
  end
- KeyStore.ScenManager = {units = outp}
+ KeyStore.ScenManager = {units = outp, lastTime = SceneManager.lastTime}
 end
 
 function SceneManager.restore(manager)
@@ -16,6 +16,7 @@ function SceneManager.restore(manager)
   local unit = ScenEdit_GetUnit({GUID=v})
   if unit ~= nil then unitList[v] = unit end
  end
+ manager.lastTime = restored.lastTime
  manager.units = unitList
 end
 
@@ -32,7 +33,13 @@ end
 
 function SceneManager.tick(manager)
  local unitPos = {}
-
+ if manager.lastTime == nil then
+   manager.lastTime = ScenEdit_CurrentTime()
+   manager.deltaTime = 0
+ else
+   manager.deltaTime = ScenEdit_CurrentTime() - manager.lastTime
+   manager.lastTime = ScenEdit_CurrentTime()
+ end
  local toRemove = {}
  for k,_ in pairs(manager.units) do
  	if ScenEdit_GetUnit({GUID=k}) == nil then table.insert(toRemove, k) end
@@ -41,9 +48,12 @@ function SceneManager.tick(manager)
  persist_manager()
 
  for _,u in pairs(manager.units) do
-  table.insert(unitPos, {u,Point.new(u)})
+  local delete_unit = nil
   if u.behaviour ~= nil and u.behaviour.update ~= nil then
-    u.behaviour.update(u)
+    delete_unit = u.behaviour.update(u)
+  end
+  if not delete_unit then
+    table.insert(unitPos, {u,Point.new(u)})
   end
  end
 
@@ -344,13 +354,20 @@ local function compose(beh1, beh2)
       if beh1.approach_handlers[k] == nil then outapproach[k] = v end
     end
   end
-  local handler1 = beh1.destroyed_handler
-  local handler2 = beh2.destroyed_handler
-  local function handler(id)
-    if handler1 ~= nil then handler1(id) end
-    if handler2 ~= nil then handler2(id) end
+  local function compose_handlers(name) 
+    local handler1 = beh1[name]
+    local handler2 = beh2[name]
+    return function(id)
+      if handler1 ~= nil then handler1(id) end
+      if handler2 ~= nil then handler2(id) end
+    end
   end
-	return {name = outname, approach_handlers = outapproach, destroyed_handler = handler }
+	return {name = outname, 
+    approach_handlers = outapproach, 
+    destroyed_handler = compose_handlers("destroyed_handler"),
+    detected_handler = compose_handlers("detected_handler"),
+    area_handler = compose_handlers("area_handler"),
+    update = compose_handlers("update") }
 end
 
 local compbh = {}
