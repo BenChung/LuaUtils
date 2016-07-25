@@ -248,6 +248,7 @@ ScenEdit_DeleteUnit({guid=dummy.guid})
 
 function Units.init()
 	local known = KeyStore.Units
+	if known == nil then return end
 	for _,v in pairs(known) do
 		local value = KeyStore["Unit_" .. v]
 		for property,iv in pairs(value) do
