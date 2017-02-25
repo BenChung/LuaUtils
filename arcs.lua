@@ -65,8 +65,6 @@ function arcSetMt:__tostring()
   return "Arc: " .. table.concat(self, " ")
 end
 
-
-
 local names = {"SB1", "SB2", "SMF1", "SMF2", "SMA1", "SMA2", "SS1", "SS2", "PS1", "PS2", "PMA1", "PMA2", "PMF1", "PMF2", "PB1", "PB2"}
 local cardinal = {}
 local angles = {}
@@ -76,6 +74,15 @@ for i=1,#names do
   local angle = da*(i-1) + da/2
   cardinal[angle] = names[i]
   angles[names[i]] = angle
+end
+
+function arcFns:new(table)
+  assert(type(self) == "table", "new must be called as Arc():new(...)")
+  for _,v in pairs(table) do
+    assert(angles[v] ~= nil, "invalid arc specification")
+  end
+  setmetatable(table, arcSetMt)
+  return table
 end
 
 local sweepFns = { }
