@@ -4,7 +4,7 @@ local function demarshal(value)
 	local demarshal_name = string.sub(val,1,nlen)
 	local demarshaller = KeyStore.demarshallers[demarshal_name]
                 if demarshaller == nil then
-                 ScenEdit_SpecialMessage("PLAN", "Error from " .. demarshal_name)
+                 ScenEdit_SpecialMessage(ScenEdit_PlayerSide(), "Error from " .. demarshal_name)
                end
 	return demarshaller(string.sub(val,nlen+1))
 end
